@@ -5,6 +5,7 @@ export default function QRScanner() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [qrCodeData, setQrCodeData] = useState(null);
+  const [currentCamera, setCurrentCamera] = useState("user"); // Default to front camera
 
   useEffect(() => {
     const getCameraFeed = async () => {
@@ -14,17 +15,17 @@ export default function QRScanner() {
           (device) => device.kind === "videoinput" && device.label.toLowerCase().includes("back")
         );
 
-        if (backCamera) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { deviceId: backCamera.deviceId },
-          });
+        const constraints = {
+          video: {
+            facingMode: currentCamera === "user" ? "user" : { exact: "environment" },
+          },
+        };
 
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-            videoRef.current.play();
-          }
-        } else {
-          console.error("Back camera not found.");
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
         }
       } catch (err) {
         console.error("Error accessing camera feed:", err);
@@ -64,13 +65,31 @@ export default function QRScanner() {
         tracks.forEach((track) => track.stop());
       }
     };
-  }, []);
+  }, [currentCamera]); // Re-run effect when camera changes
+
+  const switchCamera = () => {
+    setCurrentCamera((prev) => (prev === "user" ? "environment" : "user"));
+  };
 
   return (
     <div style={{ padding: "20px" }}>
       <h2>Camera Feed</h2>
       <video ref={videoRef} style={{ width: "100%", height: "auto", backgroundColor: "#000" }}></video>
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+      <button
+        onClick={switchCamera}
+        style={{
+          marginTop: "10px",
+          padding: "10px 20px",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Switch Camera
+      </button>
       {qrCodeData && (
         <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#f0f0f0", borderRadius: "5px" }}>
           <h3>QR Code Data:</h3>
