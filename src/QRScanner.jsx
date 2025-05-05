@@ -94,6 +94,7 @@ export default function QRScanner() {
         <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#f0f0f0", borderRadius: "5px" }}>
           <h3>QR Code Data:</h3>
           <p>{qrCodeData}</p>
+          {console.log(qrCodeData)}
         </div>
       )}
     </div>

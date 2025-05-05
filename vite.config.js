@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'rise-vocals-luis-electro.trycloudflare.com', // Add Cloudflare tunnel URL here
+      'cell-entering-hollywood-malta.trycloudflare.com', // Add Cloudflare tunnel URL here
       'localhost',
       '127.0.0.1'
     ]
